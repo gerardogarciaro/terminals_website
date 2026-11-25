@@ -6,86 +6,140 @@
 <title>TERMINALS — Prototype landing page</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--yellow:#fde002;--night:#05080d;--ink:#0a0a0a}
+:root{--yellow:#fde002;--night:#05070b;--panel:#0b0f16;--ink:#0a0a0a;--line:rgba(255,255,255,.14);--dim:#8a93a3;--amber:#ffc21a}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--yellow);color:var(--ink);font-family:'Archivo',system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+body{background:var(--night);color:#e8ecf3;font-family:'Archivo',system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit}
 .mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
 
-/* top links */
-.topbar{position:absolute;inset:0 0 auto 0;z-index:5;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:18px 28px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#fff}
+/* film grain over everything, very light */
+.grain{position:fixed;inset:-50%;z-index:40;pointer-events:none;opacity:.07;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 1.2s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-4%)}60%{transform:translate(-4%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
+
+/* the lights: one full-screen layer that goes black */
+
+/* ───────── HERO: yellow on top ───────── */
+.hero{position:relative;background:var(--yellow);color:var(--ink);text-align:center;isolation:isolate}
+.topbar{position:relative;z-index:3;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:18px 28px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:800}
 .topbar nav{display:flex;flex-wrap:wrap;gap:6px 22px}
-.topbar a{text-decoration:none;opacity:.8;transition:.2s}
-.topbar a:hover{opacity:1;color:var(--yellow)}
-.topbar .lang{font-family:'IBM Plex Mono',monospace;opacity:.7}
-
-/* hero: dark image on top */
-.hero{position:relative;min-height:100vh;display:flex;align-items:flex-end;justify-content:center;text-align:center;overflow:hidden;isolation:isolate;background:var(--night);color:#fff}
-.hero::before{content:"";position:absolute;inset:0;background:url(midnight.jpg) center 35%/cover no-repeat;z-index:-2}
-.hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(5,8,13,.5) 0,rgba(5,8,13,0) 26%,rgba(5,8,13,0) 52%,rgba(5,8,13,.9) 92%,var(--night) 100%)}
-.hero-inner{padding:0 24px 56px;max-width:900px;width:100%}
-.logo{display:inline-flex;align-items:center;gap:.2em;font-weight:900;font-size:clamp(44px,9vw,112px);letter-spacing:.14em;line-height:1;text-shadow:0 4px 40px rgba(0,0,0,.6)}
-.logo .plane{display:inline-grid;place-items:center;width:.62em;height:.62em;border:.06em solid var(--yellow);border-radius:.12em;color:var(--yellow)}
-.logo .plane svg{width:62%;height:62%;fill:currentColor}
-.subtitle{margin-top:18px;font-family:'IBM Plex Mono',monospace;font-size:clamp(13px,1.6vw,17px);letter-spacing:.24em;text-transform:uppercase;color:var(--yellow)}
-.tagline{margin:14px auto 0;max-width:560px;font-size:clamp(16px,2vw,20px);color:#d9e1ee}
-
-/* store buttons */
+.topbar a{text-decoration:none;opacity:.75;transition:.2s}
+.topbar a:hover{opacity:1;text-decoration:underline}
+.topbar .lang{font-family:'IBM Plex Mono',monospace;font-weight:500;opacity:.7}
+.stage{position:relative;margin-top:-52px;overflow:hidden}
+.hero-art{display:block;width:100%;max-height:78vh;object-fit:cover;object-position:center 40%}
+/* Miles is a separate layer cut from the same photo, so he can leave */
+.miles{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%;clip-path:inset(40% 42% 4% 42%);transition:opacity .05s}
+.stage.gone .miles{opacity:0}
+.stage.bent .miles{filter:url(#warp)}
+/* the lamp: starts off, strikes like a fluorescent tube, stays a little dim */
+.lamp{position:absolute;inset:0;z-index:5;background:#000;opacity:1;pointer-events:none}
+.lamp.on{animation:strike 1.9s linear 1 forwards}
+.lamp.dip{animation:dip .5s linear 1 forwards}
+@keyframes strike{0%{opacity:1}22%{opacity:1}24%{opacity:.35}27%{opacity:1}44%{opacity:1}46%{opacity:.2}50%{opacity:.9}58%{opacity:.25}61%{opacity:.75}70%{opacity:.14}100%{opacity:.14}}
+@keyframes dip{0%{opacity:.14}10%{opacity:.8}22%{opacity:.3}40%{opacity:.92}72%{opacity:.92}80%{opacity:.25}100%{opacity:.14}}
+/* monitor losing signal for a few frames */
+#nosignal{position:fixed;inset:0;z-index:60;display:none;place-items:center;background:var(--yellow);color:#000;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.3em;text-transform:uppercase}
+#nosignal.a{display:grid;background:#000;color:transparent;box-shadow:inset 0 0 0 49.6vh #000}
+#nosignal.a::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:#fff}
+#nosignal.b{display:grid}
+.hero-inner{position:relative;z-index:2;max-width:820px;margin:0 auto;padding:10px 24px 56px}
+.subtitle{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:clamp(12px,1.5vw,16px);letter-spacing:.22em;text-transform:uppercase}
+.tagline{margin:12px auto 0;max-width:580px;font-size:clamp(16px,2vw,20px)}
 .stores{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-.store{display:inline-flex;align-items:center;padding:12px 22px;font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:2px solid var(--yellow);color:var(--yellow);transition:.2s}
-.store.demo{background:var(--yellow);color:#000}
-.store.demo:hover{background:#fff;border-color:#fff}
-.store[aria-disabled=true]{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.55);cursor:not-allowed}
+.store{display:inline-flex;align-items:center;padding:12px 22px;font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:2px solid var(--ink);color:var(--ink);transition:.2s}
+.store.demo{background:var(--ink);color:var(--yellow)}
+.store.demo:hover{background:#fff;color:#000;border-color:#fff}
+.store[aria-disabled=true]{opacity:.45;cursor:not-allowed}
+/* the hall dims as you walk away from it */
+.hero-dim{position:absolute;inset:0;z-index:4;background:#000;opacity:0;pointer-events:none}
 
-/* trailer (dark) */
-.dark{background:var(--night);padding:0 24px 72px}
-.trailer{display:grid;place-items:center;position:relative;max-width:1040px;margin:0 auto;aspect-ratio:16/9;background:#000 url(midnight.jpg) center/cover;border:1px solid rgba(255,255,255,.15);overflow:hidden;text-decoration:none;color:#fff}
-.trailer::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.55)}
-.play{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase}
-.play i{width:84px;height:84px;border-radius:50%;border:2px solid var(--yellow);display:grid;place-items:center;transition:.2s}
+/* wayfinding sign: the hard edge between light and dark */
+.sign{background:#000;color:var(--yellow);border-block:3px solid var(--yellow);font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;letter-spacing:.22em;text-transform:uppercase;overflow:hidden;white-space:nowrap}
+.sign div{display:inline-block;padding:13px 0;animation:slide 38s linear infinite}
+.sign span{margin:0 28px}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* ───────── DARK from here ───────── */
+section{padding:0 0 72px}
+.col{max-width:720px;margin:0 auto;padding:0 24px}
+.wide{max-width:1040px;margin:0 auto;padding:72px 24px 0}
+.block{padding:34px 0;border-top:1px solid var(--line)}
+.block:first-child{border-top:0}
+h2{font-weight:900;font-size:clamp(24px,3.6vw,34px);text-transform:uppercase;line-height:1.1;letter-spacing:.01em;margin-bottom:14px;color:var(--yellow)}
+.block p{font-size:18px;color:#c9d0dc;margin-bottom:14px}
+.block p:last-child{margin-bottom:0}
+.block p.hook{font-size:clamp(20px,2.6vw,25px);font-weight:800;color:#fff;line-height:1.35}
+.note{border-left:3px solid var(--yellow);padding-left:16px;color:#aab3c2!important;font-size:16px!important}
+.list{list-style:none}
+.list li{padding:13px 0;border-top:1px solid var(--line);font-size:18px;color:#c9d0dc}
+.list li:first-child{border-top:0;padding-top:0}
+.list li b{color:#fff;font-weight:800}
+.facts{display:grid;grid-template-columns:150px 1fr;gap:10px 18px;font-size:17px;color:#c9d0dc}
+.facts dt{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);padding-top:4px}
+
+/* trailer photo: security-camera treatment */
+.trailer{display:block;position:relative;aspect-ratio:16/9;background:#000;border:1px solid var(--line);overflow:hidden;text-decoration:none;color:#fff;isolation:isolate}
+.cam,.cam i{position:absolute;inset:0}
+.cam{filter:url(#ripple);animation:creep 26s ease-in-out infinite alternate}
+.cam i{background:url(midnight.jpg) center/cover}
+.cam i.r,.cam i.b{mix-blend-mode:screen;opacity:.55;background-blend-mode:multiply}
+.cam i.r{background-color:#f00;animation:splitR 5s steps(1) infinite}
+.cam i.b{background-color:#0ff;animation:splitB 5s steps(1) infinite}
+.trailer:hover .cam i.r{animation-duration:.5s}.trailer:hover .cam i.b{animation-duration:.5s}
+@keyframes creep{from{transform:scale(1.03)}to{transform:scale(1.14) translate(-1%,1%)}}
+@keyframes splitR{0%,100%{transform:translate(2px,0)}46%{transform:translate(2px,0)}48%{transform:translate(14px,-2px)}50%{transform:translate(-9px,1px)}52%{transform:translate(3px,0)}}
+@keyframes splitB{0%,100%{transform:translate(-2px,0)}46%{transform:translate(-2px,0)}48%{transform:translate(-16px,2px)}50%{transform:translate(8px,0)}52%{transform:translate(-3px,0)}}
+.scan{position:absolute;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(to bottom,rgba(0,0,0,.34) 0 1px,transparent 1px 3px),radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.75) 100%)}
+.scan::after{content:"";position:absolute;left:0;right:0;top:-20%;height:16%;background:linear-gradient(transparent,rgba(255,255,255,.09),transparent);animation:track 7s linear infinite}
+@keyframes track{to{top:120%}}
+.hud{position:absolute;z-index:2;font-family:'IBM Plex Mono',monospace;font-size:clamp(10px,1.3vw,13px);letter-spacing:.16em;text-transform:uppercase;color:#e9eef5;text-shadow:0 0 6px rgba(255,255,255,.5)}
+.hud.tl{left:16px;top:12px}.hud.tr{right:16px;top:12px}.hud.bl{left:16px;bottom:12px}
+.rec::before{content:"";display:inline-block;width:.7em;height:.7em;border-radius:50%;background:#ff2b2b;margin-right:.6em;animation:blink 1.2s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.play{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase}
+.play i{width:84px;height:84px;border-radius:50%;border:2px solid var(--yellow);display:grid;place-items:center;background:rgba(0,0,0,.45);transition:.2s}
 .play i::after{content:"";border-left:22px solid var(--yellow);border-block:14px solid transparent;margin-left:6px}
 .trailer:hover .play i{background:var(--yellow)}
 .trailer:hover .play i::after{border-left-color:#000}
-.tnote{max-width:1040px;margin:10px auto 0;font-size:11px;color:#8a93a3;font-family:'IBM Plex Mono',monospace}
 
-/* yellow image */
-.art{display:block;width:100%;aspect-ratio:16/9;max-height:90vh;object-fit:cover;object-position:center;background:var(--yellow);
-  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 86%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0,#000 86%,transparent 100%)}
+.buy{margin-top:8px;display:flex;flex-wrap:wrap;gap:10px}
+.buy a{display:inline-flex;padding:12px 22px;font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:2px solid var(--yellow);color:var(--yellow);transition:.2s}
+.buy a.demo{background:var(--yellow);color:#000}
+.buy a.demo:hover{background:#fff;border-color:#fff}
+.buy a[aria-disabled=true]{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.5);cursor:not-allowed}
+.social{margin-top:26px;display:flex;flex-wrap:wrap;gap:6px 22px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:800}
+.social a{text-decoration:none;opacity:.75}
+.social a:hover{opacity:1;color:var(--yellow)}
+footer{padding:26px 24px 44px;text-align:center;font-size:13px;border-top:1px solid var(--line);color:var(--dim)}
+footer span{display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.7}
 
-/* everything yellow + black from here */
-main{padding:24px 24px 96px}
-.col{max-width:720px;margin:0 auto}
-.block{padding:30px 0;border-top:2px solid var(--ink)}
-.block:first-child{border-top:0}
-.block h3{font-weight:900;font-size:clamp(22px,3.2vw,30px);text-transform:uppercase;letter-spacing:.02em;line-height:1.1;margin-bottom:8px}
-.block p{font-size:18px;max-width:600px}
-.inspo h2{font-weight:900;font-size:clamp(26px,4vw,38px);text-transform:uppercase;margin-bottom:14px}
-.inspo p{font-size:18px;margin-bottom:14px}
-.inspo ul{list-style:none;margin-top:6px}
-.inspo li{padding:12px 0;border-top:1px solid rgba(0,0,0,.35);font-size:18px}
-.inspo li:last-child{border-bottom:1px solid rgba(0,0,0,.35)}
-.inspo li b{font-weight:800}
-.buy{margin-top:48px;display:flex;flex-wrap:wrap;gap:10px}
-.buy a{display:inline-flex;padding:12px 22px;font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:2px solid var(--ink);color:var(--ink);transition:.2s}
-.buy a.demo{background:var(--ink);color:var(--yellow)}
-.buy a.demo:hover{background:#fff;color:#000}
-.buy a[aria-disabled=true]{opacity:.5;cursor:not-allowed}
-.social{margin-top:28px;display:flex;flex-wrap:wrap;gap:6px 22px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:800}
-.social a{text-decoration:none}
-.social a:hover{text-decoration:underline}
-
-footer{padding:26px 24px 44px;text-align:center;font-size:13px;border-top:2px solid var(--ink)}
-footer span{display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.65}
-
-@media (max-width:700px){.topbar{flex-direction:column;padding:14px 18px}}
+@media (max-width:700px){
+  .topbar{flex-direction:column;padding:14px 18px}
+  .stage{margin-top:0}
+  .facts{grid-template-columns:1fr;gap:2px 0}.facts dd{margin-bottom:10px}
+  .wide{padding-top:44px}
+}
+@media (prefers-reduced-motion:reduce){
+  .grain,.sign div,.cam,.cam i,.scan::after,.rec::before{animation:none!important}.cam{filter:none}
+  html{scroll-behavior:auto}
+}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="warp" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.001 0.14" numOctaves="1" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="60" xChannelSelector="R" yChannelSelector="G"/></filter>
+  <filter id="ripple"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="8" result="n"><animate attributeName="baseFrequency" dur="14s" values="0.012 0.05;0.016 0.07;0.012 0.05" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" in2="n" scale="9"/></filter>
+</svg>
+<div class="grain" aria-hidden="true"></div>
+<div id="nosignal" aria-hidden="true">No signal · Gate ∞B</div>
 
-<!-- DARK IMAGE + TITLE -->
+<!-- YELLOW ON TOP -->
 <header class="hero" id="top">
   <div class="topbar">
     <nav aria-label="Links">
@@ -98,79 +152,179 @@ footer span{display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;f
     </nav>
     <span class="lang">EN · ES</span>
   </div>
-
+  <div class="stage" id="stage">
+    <img class="hero-art" src="empty.jpg" alt="TERMINALS. A lone passenger sits on an airport bench against a flat yellow background.">
+    <img class="miles" src="solitude.jpg" alt="" aria-hidden="true">
+  </div>
   <div class="hero-inner">
-    <div class="logo" role="img" aria-label="TERMINALS">
-      TERMINALS
-      <span class="plane" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></span>
-    </div>
-    <p class="subtitle">Found in transit</p>
-    <p class="tagline">Quiet, uncanny, unhurried. There are no monsters in the departure hall. Only the feeling that you should not be the one waiting.</p>
+    <p class="subtitle">A liminal horror game built on the myths of the Denver airport</p>
+    <p class="tagline">Every flight is on schedule. Everything works. There is nobody here.</p>
     <div class="stores">
-      <a class="store demo" href="#">▶ Windows demo</a>
+      <a class="store demo" href="https://drive.google.com/file/d/1rOac8uCYSPXGgJoljBXkIudL5xh4qNG8/view">▶ Windows demo</a>
       <a class="store" aria-disabled="true" title="Steam page not live yet">Steam · soon</a>
       <a class="store" aria-disabled="true">PlayStation</a>
       <a class="store" aria-disabled="true">Nintendo</a>
       <a class="store" aria-disabled="true">Xbox</a>
     </div>
   </div>
+  <div class="hero-dim" aria-hidden="true"></div>
+  <div class="lamp" id="lamp" aria-hidden="true"></div>
 </header>
 
-<!-- TRAILER -->
-<div class="dark">
-  <a class="trailer" href="#" aria-label="Watch the trailer (placeholder)"><span class="play"><i></i>Watch the trailer</span></a>
-  <p class="tnote">// Prototype: the trailer embed goes here once the video is public.</p>
-</div>
+<div class="sign" aria-hidden="true"><div id="signText"></div></div>
 
-<!-- YELLOW IMAGE -->
-<img class="art" src="solitude.jpg" alt="A lone passenger sits on an airport bench against a flat yellow background" loading="lazy">
-
-<!-- ALL YELLOW FROM HERE -->
+<!-- DARK BELOW -->
 <main>
-  <div class="col">
-    <div class="block">
-      <h3>No combat. No inventory.</h3>
-      <p>You walk, you look, you carry, you throw, you wait. The building gives the orders.</p>
+  <section>
+    <div class="wide">
+      <a class="trailer" href="https://drive.google.com/file/d/1SeHRUjmpBgHuNVHPwUqTLGXQTYxzSz5X/view" aria-label="Watch the trailer">
+        <span class="cam"><i></i><i class="r"></i><i class="b"></i></span>
+        <span class="scan"></span>
+        <span class="hud tl rec">Rec</span>
+        <span class="hud tr">Cam 04 · Gate ∞B</span>
+        <span class="hud bl" id="tc">00:00:00</span>
+        <span class="play"><i></i>Watch the trailer</span>
+      </a>
     </div>
-    <div class="block">
-      <h3>Everything works</h3>
-      <p>Every screen is lit. Every flight is on schedule. Every task is ordinary, and each one is slightly wrong.</p>
-    </div>
-    <div class="block">
-      <h3>The terminal moves</h3>
-      <p>It only changes while you are not looking. Lights out, and the hall is different when they come back on.</p>
-    </div>
-    <div class="block">
-      <h3>You are not alone</h3>
-      <p>Silhouettes sit and queue. Something broken is looking for you. It does not fight. It follows.</p>
-    </div>
+  </section>
 
-    <div class="inspo block">
-      <h2>Inspirations</h2>
-      <p>TERMINALS grew out of the uncanny corners of the internet and a few strange screens. Among them:</p>
-      <ul>
-        <li><b>Kane Pixels</b> and <i>The Backrooms (Found Footage)</i></li>
-        <li><b>Severance</b></li>
-        <li><b>Twin Peaks</b></li>
-        <li><b>Crystal Castles</b>, the band, and the look of their music videos</li>
-        <li><b>Denver International Airport</b> and the lore around it</li>
-      </ul>
-    </div>
+  <section>
+    <div class="col">
+      <div class="block">
+        <p class="hook">You wake up in an airport. Every flight is on schedule. Everything works, but there's nobody here.</p>
+        <p>TERMINALS is a first-person casual horror puzzle game. Miles Ashby, 21, wakes up in a car in the flooded parking lot of an empty airport, with no memory of arriving. Kiosks print, belts run, and a voice on the PA calls him by his name.</p>
+        <p>He does what airports ask: check in, drop the bag, clear security, find the gate. Every task is ordinary and slightly wrong, and every time the lights go out, the terminal has rearranged itself behind him.</p>
+        <p class="note">Note: there is no combat and no inventory. One thing in the terminal comes after you; if it catches you, you start the area again. The game plays on procedure, empty spaces and the feeling of being watched.</p>
+      </div>
 
-    <div class="buy">
-      <a class="demo" href="#">▶ Play the Windows demo</a>
-      <a aria-disabled="true">Steam · coming soon</a>
+      <div class="block">
+        <h2>The game</h2>
+        <ul class="list">
+          <li><b>The airport is the puzzle.</b> Every airport procedure hides one.</li>
+          <li><b>It rearranges behind you.</b> The space you just crossed is never the same.</li>
+          <li><b>A chase, not a fight.</b> No weapons. You walk, look, carry, throw and wait.</li>
+          <li><b>The Passengers.</b> Shadows that move when you look away.</li>
+          <li><b>Three endings.</b> A run lasts about 90 minutes. Hidden areas unlock two more endings.</li>
+          <li><b>Made to be watched.</b> Easy-to-clip scares and simple controls on any platform.</li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <h2>Who you meet</h2>
+        <ul class="list">
+          <li><b>Miles Ashby.</b> Flying alone for the first time, to see a band.</li>
+          <li><b>Ada.</b> The voice of the terminal. She knows his name.</li>
+          <li><b>Gene.</b> The only other passenger. Drops the hints you need, then vanishes.</li>
+          <li><b>The King of Pain.</b> The one presence in the terminal that comes after you.</li>
+          <li><b>The Passengers.</b> Silhouettes that sit, queue and wait, and react to you.</li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <h2>Details</h2>
+        <dl class="facts">
+          <dt>Genre</dt><dd>Atmospheric horror puzzle, first-person</dd>
+          <dt>Platforms</dt><dd>PC, PS5, Xbox Series X|S and Switch 2</dd>
+          <dt>Release</dt><dd>October 2027, in time for Halloween</dd>
+          <dt>Length</dt><dd>90 minutes per run, 3 endings, about 5 hours in total</dd>
+          <dt>Languages</dt><dd>Text in English, Spanish, Portuguese, Italian, French, German, Japanese and Mandarin. Voice-over in English</dd>
+          <dt>Developer</dt><dd>Gerardo García, director of Flat Kingdom</dd>
+        </dl>
+      </div>
+
+      <div class="block">
+        <h2>Inspired by</h2>
+        <p>TERMINALS draws on the mythology around Denver International Airport: the underground tunnels, the murals, the blue horse with red eyes, and decades of conspiracy theories the airport itself plays along with.</p>
+        <ul class="list">
+          <li><b>Kane Pixels</b> and <i>The Backrooms (Found Footage)</i></li>
+          <li><b>Severance</b></li>
+          <li><b>Twin Peaks</b> and David Lynch</li>
+          <li><b>Crystal Castles</b>, the band, and the look of their music videos</li>
+        </ul>
+      </div>
+
+      <div class="block">
+        <div class="buy">
+          <a class="demo" href="https://drive.google.com/file/d/1rOac8uCYSPXGgJoljBXkIudL5xh4qNG8/view">▶ Play the Windows demo</a>
+          <a aria-disabled="true">Steam · coming soon</a>
+        </div>
+        <div class="social">
+          <a href="#">Discord</a><a href="#">YouTube</a><a href="#">Bluesky</a><a href="#">Instagram</a><a href="#">X</a>
+        </div>
+      </div>
     </div>
-    <div class="social">
-      <a href="#">Discord</a><a href="#">YouTube</a><a href="#">Bluesky</a><a href="#">Instagram</a><a href="#">X</a>
-    </div>
-  </div>
+  </section>
 </main>
 
 <footer>
-  © 2026 TERMINALS. All rights reserved.
-  <span>Design prototype · art shown is placeholder</span>
+  © 2026 TERMINALS. All rights reserved. Contact: gerardogarciaro@gmail.com
+  <span>Design prototype</span>
 </footer>
 
+<script>
+(function(){
+  var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var $ = function(id){ return document.getElementById(id); };
+
+  var s = '<span>↓ Departures</span><span>All gates</span><span>Baggage claim</span><span>No exit</span><span>Gate ∞B</span><span>Please remain seated</span>';
+  $('signText').innerHTML = s + s + s + s;
+
+  /* yellow photo */
+  var hero = document.querySelector('.hero'), dim = document.querySelector('.hero-dim'), stage = $('stage'), lamp = $('lamp'), ns = $('nosignal');
+  var tick = false, heroOn = true, scrolledAway = false, failed = false, busy = false;
+
+  /* the lamp strikes on load and stays a little dim */
+  if (calm){ lamp.style.opacity = .14; } else { requestAnimationFrame(function(){ lamp.classList.add('on'); }); }
+
+  /* now and then the light dips. When it comes back, Miles may not be there */
+  function dip(change){
+    if (busy || calm) return; busy = true;
+    lamp.classList.remove('on'); lamp.style.opacity = .14; void lamp.offsetWidth; lamp.classList.add('dip');
+    setTimeout(change, 250);
+    setTimeout(function(){ lamp.classList.remove('dip'); busy = false; }, 520);
+  }
+  function bend(){ stage.classList.add('bent'); setTimeout(function(){ stage.classList.remove('bent'); }, 380); }
+  function idle(){
+    if (heroOn && !document.hidden && !scrolledAway){
+      var r = Math.random();
+      if (stage.classList.contains('gone')) dip(function(){ stage.classList.remove('gone'); });
+      else if (r < .4) dip(function(){ stage.classList.add('gone'); });
+      else if (r < .75) bend();
+      else dip(function(){});
+    }
+    setTimeout(idle, 4200 + Math.random() * 4800);
+  }
+  if (!calm) setTimeout(idle, 5200);
+
+  /* scrolling: the hall dims, Miles leaves, and once the screen loses signal */
+  function noSignal(){
+    if (calm) return;
+    ns.className = 'a';
+    setTimeout(function(){ ns.className = 'b'; }, 90);
+    setTimeout(function(){ ns.className = 'a'; }, 260);
+    setTimeout(function(){ ns.className = ''; }, 330);
+  }
+  function onScroll(){
+    if (tick) return; tick = true;
+    requestAnimationFrame(function(){
+      tick = false;
+      var p = Math.min(1, Math.max(0, window.scrollY / (hero.offsetHeight * 0.9)));
+      dim.style.opacity = (p * 0.8).toFixed(3); heroOn = p < 0.8;
+      if (p > 0.12 && !scrolledAway){ scrolledAway = true; stage.classList.add('gone'); }
+      if (p > 0.6 && !failed){ failed = true; noSignal(); }
+      if (p < 0.02 && scrolledAway){ scrolledAway = false; failed = false; dip(function(){ stage.classList.remove('gone'); }); }
+    });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+  /* dark photo: running camera timecode */
+  var tc = $('tc'), t0 = Date.now();
+  function two(v){ return ('0' + v).slice(-2); }
+  setInterval(function(){
+    var d = new Date(), f = Math.floor(((Date.now() - t0) % 1000) / 40);
+    tc.textContent = two(d.getHours()) + ':' + two(d.getMinutes()) + ':' + two(d.getSeconds()) + ':' + two(f);
+  }, calm ? 1000 : 80);
+})();
+</script>
 </body>
 </html>
