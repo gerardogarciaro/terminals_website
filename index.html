@@ -51,8 +51,8 @@ a{color:inherit}
 .hero-inner{position:relative;z-index:2;max-width:820px;margin:0 auto;padding:10px 24px 56px}
 .subtitle{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:clamp(12px,1.5vw,16px);letter-spacing:.22em;text-transform:uppercase}
 .tagline{margin:12px auto 0;max-width:580px;font-size:clamp(16px,2vw,20px)}
-.stores{margin-top:26px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-.store{display:inline-flex;align-items:center;padding:12px 22px;font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:2px solid var(--ink);color:var(--ink);transition:.2s}
+.stores{margin-top:26px;display:flex;flex-wrap:nowrap;gap:10px;justify-content:center}
+.store{display:inline-flex;align-items:center;white-space:nowrap;padding:12px 22px;font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:2px solid var(--ink);color:var(--ink);transition:.2s}
 .store.demo{background:var(--ink);color:var(--yellow)}
 .store.demo:hover{background:#fff;color:#000;border-color:#fff}
 .store[aria-disabled=true]{opacity:.45;cursor:not-allowed}
@@ -69,16 +69,16 @@ a{color:inherit}
 section{padding:0 0 72px}
 .col{max-width:720px;margin:0 auto;padding:0 24px}
 .wide{max-width:1040px;margin:0 auto;padding:72px 24px 0}
-.block{padding:34px 0;border-top:1px solid var(--line)}
+.block{padding:30px 0}
 .block:first-child{border-top:0}
 h2{font-weight:900;font-size:clamp(24px,3.6vw,34px);text-transform:uppercase;line-height:1.1;letter-spacing:.01em;margin-bottom:14px;color:var(--yellow)}
 .block p{font-size:18px;color:#c9d0dc;margin-bottom:14px}
 .block p:last-child{margin-bottom:0}
 .block p.hook{font-size:clamp(20px,2.6vw,25px);font-weight:800;color:#fff;line-height:1.35}
-.note{border-left:3px solid var(--yellow);padding-left:16px;color:#aab3c2!important;font-size:16px!important}
+.note{color:#aab3c2!important;font-size:16px!important}
 .list{list-style:none}
-.list li{padding:13px 0;border-top:1px solid var(--line);font-size:18px;color:#c9d0dc}
-.list li:first-child{border-top:0;padding-top:0}
+.list li{padding:9px 0;font-size:18px;color:#c9d0dc}
+.list li:first-child{padding-top:0}
 .list li b{color:#fff;font-weight:800}
 .facts{display:grid;grid-template-columns:150px 1fr;gap:10px 18px;font-size:17px;color:#c9d0dc}
 .facts dt{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);padding-top:4px}
@@ -113,13 +113,14 @@ h2{font-weight:900;font-size:clamp(24px,3.6vw,34px);text-transform:uppercase;lin
 .buy a.demo{background:var(--yellow);color:#000}
 .buy a.demo:hover{background:#fff;border-color:#fff}
 .buy a[aria-disabled=true]{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.5);cursor:not-allowed}
-.social{margin-top:26px;display:flex;flex-wrap:wrap;gap:6px 22px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:800}
+.social{margin-top:0;display:flex;flex-wrap:wrap;gap:6px 22px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:800}
 .social a{text-decoration:none;opacity:.75}
 .social a:hover{opacity:1;color:var(--yellow)}
-footer{padding:26px 24px 44px;text-align:center;font-size:13px;border-top:1px solid var(--line);color:var(--dim)}
+footer{padding:26px 24px 44px;text-align:center;font-size:13px;color:var(--dim)}
 footer span{display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.7}
 
 @media (max-width:700px){
+  .stores{gap:6px}.store{padding:9px 9px;font-size:10px;letter-spacing:.06em}
   .topbar{flex-direction:column;padding:14px 18px}
   .stage{margin-top:0}
   .facts{grid-template-columns:1fr;gap:2px 0}.facts dd{margin-bottom:10px}
@@ -143,12 +144,9 @@ footer span{display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;f
 <header class="hero" id="top">
   <div class="topbar">
     <nav aria-label="Links">
-      <a href="#">Press kit</a>
-      <a href="#">Discord</a>
-      <a href="#">YouTube</a>
-      <a href="#">Bluesky</a>
-      <a href="#">Instagram</a>
-      <a href="#">X</a>
+      <a href="https://docs.google.com/document/d/16cIVTH9s3MwbjHRNsHIi6-UvJtvjB0vf38XJtKVJrN4/edit">Press kit</a>
+      <a href="https://www.youtube.com/@gerardogarciaro">YouTube</a>
+      <a href="https://x.com/Jerryquest_">X</a>
     </nav>
     <span class="lang">EN · ES</span>
   </div>
@@ -160,7 +158,6 @@ footer span{display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;f
     <p class="subtitle">A liminal horror game built on the myths of the Denver airport</p>
     <p class="tagline">Every flight is on schedule. Everything works. There is nobody here.</p>
     <div class="stores">
-      <a class="store demo" href="https://drive.google.com/file/d/1rOac8uCYSPXGgJoljBXkIudL5xh4qNG8/view">▶ Windows demo</a>
       <a class="store" aria-disabled="true" title="Steam page not live yet">Steam · soon</a>
       <a class="store" aria-disabled="true">PlayStation</a>
       <a class="store" aria-disabled="true">Nintendo</a>
@@ -244,12 +241,8 @@ footer span{display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;f
       </div>
 
       <div class="block">
-        <div class="buy">
-          <a class="demo" href="https://drive.google.com/file/d/1rOac8uCYSPXGgJoljBXkIudL5xh4qNG8/view">▶ Play the Windows demo</a>
-          <a aria-disabled="true">Steam · coming soon</a>
-        </div>
         <div class="social">
-          <a href="#">Discord</a><a href="#">YouTube</a><a href="#">Bluesky</a><a href="#">Instagram</a><a href="#">X</a>
+          <a href="https://docs.google.com/document/d/16cIVTH9s3MwbjHRNsHIi6-UvJtvjB0vf38XJtKVJrN4/edit">Press kit</a><a href="https://www.youtube.com/@gerardogarciaro">YouTube</a><a href="https://x.com/Jerryquest_">X</a>
         </div>
       </div>
     </div>
@@ -258,7 +251,6 @@ footer span{display:block;margin-top:6px;font-family:'IBM Plex Mono',monospace;f
 
 <footer>
   © 2026 TERMINALS. All rights reserved. Contact: gerardogarciaro@gmail.com
-  <span>Design prototype</span>
 </footer>
 
 <script>
